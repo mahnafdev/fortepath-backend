@@ -7,6 +7,13 @@ datasource db {
     provider = "postgresql"
 }
 
+//* Enum - BookingStatus
+enum BookingStatus {
+    CONFIRMED
+    COMPLETED
+    CANCELLED
+}
+
 //* Model - Tutor Profile
 model TutorProfile {
     id          String  @id @default(cuid())
@@ -19,6 +26,7 @@ model TutorProfile {
 
     tutorCategories TutorCategory[]
     reviews         Review[]
+    bookings        Booking[]
 
     @@index([userId])
     @@map("tutor_profile")
@@ -57,6 +65,25 @@ model Review {
     tutorId   String
     rating    Decimal @db.Decimal(1, 0)
     feedback  String  @db.VarChar(200)
+
+    createdAt DateTime @default(now()) @db.Timestamptz
+
+    tutor TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+    @@index([studentId])
+    @@index([tutorId])
+}
+
+//* Model - Booking
+model Booking {
+    id        String        @id @default(cuid())
+    studentId String
+    tutorId   String
+    topic     String        @db.VarChar(100)
+    dueTime   DateTime      @db.Timestamptz
+    duration  Int           @db.SmallInt
+    notes     String?       @db.VarChar(200)
+    status    BookingStatus @default(CONFIRMED)
 
     createdAt DateTime @default(now()) @db.Timestamptz
 
