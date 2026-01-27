@@ -14,9 +14,11 @@ model TutorProfile {
     designation String? @db.VarChar(60)
     bio         String? @db.VarChar(250)
 
-    createdAt       DateTime        @default(now()) @db.Timestamptz
-    updatedAt       DateTime        @updatedAt @db.Timestamptz
+    createdAt DateTime @default(now()) @db.Timestamptz
+    updatedAt DateTime @updatedAt @db.Timestamptz
+
     tutorCategories TutorCategory[]
+    reviews         Review[]
 
     @@index([userId])
     @@map("tutor_profile")
@@ -29,8 +31,9 @@ model Category {
     slug        String  @unique @db.VarChar(30)
     description String? @db.VarChar(100)
 
-    createdAt       DateTime        @default(now()) @db.Timestamptz
-    updatedAt       DateTime        @updatedAt @db.Timestamptz
+    createdAt DateTime @default(now()) @db.Timestamptz
+    updatedAt DateTime @updatedAt @db.Timestamptz
+
     tutorCategories TutorCategory[]
 
     @@map("category")
@@ -45,4 +48,20 @@ model TutorCategory {
     category Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
     @@id([tutorId, categoryId])
+}
+
+//* Model - Review
+model Review {
+    id        String  @id @default(cuid())
+    studentId String
+    tutorId   String
+    rating    Decimal @db.Decimal(1, 0)
+    feedback  String  @db.VarChar(200)
+
+    createdAt DateTime @default(now()) @db.Timestamptz
+
+    tutor TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+
+    @@index([studentId])
+    @@index([tutorId])
 }
