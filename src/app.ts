@@ -1,9 +1,14 @@
+import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import "dotenv/config";
 import express, { Application } from "express";
+import { auth } from "./lib/auth.ts";
 
 //* Express App
 const app: Application = express();
+
+//* Auth Route Handler
+app.all("/api/v1/auth/*splat", toNodeHandler(auth));
 
 //* Global Middlewares
 app.use(express.json());
