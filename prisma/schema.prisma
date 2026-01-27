@@ -7,27 +7,42 @@ datasource db {
     provider = "postgresql"
 }
 
+//* Model - Tutor Profile
 model TutorProfile {
     id          String  @id @default(cuid())
     userId      String  @unique
     designation String? @db.VarChar(60)
     bio         String? @db.VarChar(250)
 
-    createdAt DateTime @default(now()) @db.Timestamptz
-    updatedAt DateTime @updatedAt @db.Timestamptz
+    createdAt       DateTime        @default(now()) @db.Timestamptz
+    updatedAt       DateTime        @updatedAt @db.Timestamptz
+    tutorCategories TutorCategory[]
 
     @@index([userId])
     @@map("tutor_profile")
 }
 
+//* Model - Category
 model Category {
     id          String  @id @default(cuid())
     name        String  @unique @db.VarChar(30)
     slug        String  @unique @db.VarChar(30)
     description String? @db.VarChar(100)
 
-    createdAt DateTime @default(now()) @db.Timestamptz
-    updatedAt DateTime @updatedAt @db.Timestamptz
+    createdAt       DateTime        @default(now()) @db.Timestamptz
+    updatedAt       DateTime        @updatedAt @db.Timestamptz
+    tutorCategories TutorCategory[]
 
     @@map("category")
+}
+
+//* Junction Model - Tutor Category
+model TutorCategory {
+    tutorId    String
+    categoryId String
+
+    tutor    TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+    category Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    @@id([tutorId, categoryId])
 }
