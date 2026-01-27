@@ -8,13 +8,26 @@ datasource db {
 }
 
 model TutorProfile {
-    id          String   @id @default(cuid())
-    userId      String   @unique
-    designation String?  @db.VarChar(60)
-    bio         String?  @db.VarChar(250)
-    createdAt   DateTime @default(now()) @db.Timestamptz
-    updatedAt   DateTime @updatedAt @db.Timestamptz
+    id          String  @id @default(cuid())
+    userId      String  @unique
+    designation String? @db.VarChar(60)
+    bio         String? @db.VarChar(250)
+
+    createdAt DateTime @default(now()) @db.Timestamptz
+    updatedAt DateTime @updatedAt @db.Timestamptz
 
     @@index([userId])
     @@map("tutor_profile")
+}
+
+model Category {
+    id          String  @id @default(cuid())
+    name        String  @unique @db.VarChar(30)
+    slug        String  @unique @db.VarChar(30)
+    description String? @db.VarChar(100)
+
+    createdAt DateTime @default(now()) @db.Timestamptz
+    updatedAt DateTime @updatedAt @db.Timestamptz
+
+    @@map("category")
 }
