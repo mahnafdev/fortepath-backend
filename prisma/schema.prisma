@@ -14,22 +14,91 @@ enum BookingStatus {
     CANCELLED
 }
 
+//* Model - User
+model User {
+    id            String    @id
+    name          String
+    email         String    @unique
+    emailVerified Boolean   @default(false)
+    image         String?
+    role          String?
+    banned        Boolean?  @default(false)
+    banReason     String?
+    banExpires    DateTime?
+
+    sessions Session[]
+    accounts Account[]
+
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    tutorProfile TutorProfile?
+    reviews      Review[]
+    bookings     Booking[]
+
+    @@map("user")
+}
+
+//* Model - Account
+model Account {
+    id           String  @id
+    userId       String
+    accountId    String
+    providerId   String
+    accessToken  String?
+    refreshToken String?
+    idToken      String?
+    scope        String?
+    password     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    accessTokenExpiresAt  DateTime?
+    refreshTokenExpiresAt DateTime?
+    createdAt             DateTime  @default(now())
+    updatedAt             DateTime  @updatedAt
+
+    @@index([userId])
+    @@map("account")
+}
+
 //* Model - Tutor Profile
 model TutorProfile {
     id          String  @id @default(cuid())
     userId      String  @unique
     designation String? @db.VarChar(60)
     bio         String? @db.VarChar(250)
+    hourlyRate  Int     @db.SmallInt
 
     createdAt DateTime @default(now()) @db.Timestamptz
     updatedAt DateTime @updatedAt @db.Timestamptz
 
+    user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
     tutorCategories TutorCategory[]
     reviews         Review[]
     bookings        Booking[]
 
     @@index([userId])
     @@map("tutor_profile")
+}
+
+//* Model - Session
+model Session {
+    id             String  @id
+    userId         String
+    token          String
+    ipAddress      String?
+    userAgent      String?
+    impersonatedBy String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([token])
+    @@index([userId])
+    @@map("session")
 }
 
 //* Model - Category
@@ -56,29 +125,32 @@ model TutorCategory {
     category Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
     @@id([tutorId, categoryId])
+    @@map("tutor_category")
 }
 
 //* Model - Review
 model Review {
     id        String  @id @default(cuid())
-    studentId String
+    studentId String?
     tutorId   String
     rating    Decimal @db.Decimal(1, 0)
     feedback  String  @db.VarChar(200)
 
     createdAt DateTime @default(now()) @db.Timestamptz
 
-    tutor TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+    student User?        @relation(fields: [studentId], references: [id], onDelete: SetNull)
+    tutor   TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
 
     @@index([studentId])
     @@index([tutorId])
+    @@map("review")
 }
 
 //* Model - Booking
 model Booking {
     id        String        @id @default(cuid())
-    studentId String
-    tutorId   String
+    studentId String?
+    tutorId   String?
     topic     String        @db.VarChar(100)
     dueTime   DateTime      @db.Timestamptz
     duration  Int           @db.SmallInt
@@ -87,8 +159,24 @@ model Booking {
 
     createdAt DateTime @default(now()) @db.Timestamptz
 
-    tutor TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+    student User?         @relation(fields: [studentId], references: [id], onDelete: SetNull)
+    tutor   TutorProfile? @relation(fields: [tutorId], references: [id], onDelete: SetNull)
 
     @@index([studentId])
     @@index([tutorId])
+    @@map("booking")
+}
+
+//* Model - Verification
+model Verification {
+    id         String @id
+    identifier String
+    value      String
+
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([identifier])
+    @@map("verification")
 }

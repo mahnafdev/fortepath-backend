@@ -3,6 +3,7 @@ import cors from "cors";
 import "dotenv/config";
 import express, { Application } from "express";
 import { auth } from "./lib/auth.ts";
+import { tutorsRouter } from "./modules/tutors/tutors.router.ts";
 
 //* Express App
 const app: Application = express();
@@ -18,6 +19,9 @@ app.use(
 		credentials: true,
 	}),
 );
+
+//* Modules
+app.use(`${process.env.API_BASE}/tutors`, tutorsRouter);
 
 //* GET /
 app.get("/", (_req, res) => {
