@@ -106,7 +106,7 @@ model Category {
     id          String  @id @default(cuid())
     name        String  @unique @db.VarChar(30)
     slug        String  @unique @db.VarChar(30)
-    description String? @db.VarChar(100)
+    description String? @db.VarChar(200)
 
     createdAt DateTime @default(now()) @db.Timestamptz
     updatedAt DateTime @updatedAt @db.Timestamptz

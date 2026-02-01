@@ -4,6 +4,7 @@ import "dotenv/config";
 import express, { Application } from "express";
 import { auth } from "./lib/auth.ts";
 import { tutorsRouter } from "./modules/tutors/tutors.router.ts";
+import { categoriesRouter } from "./modules/categories/categories.router.ts";
 
 //* Express App
 const app: Application = express();
@@ -22,6 +23,7 @@ app.use(
 
 //* Modules
 app.use(`${process.env.API_BASE}/tutors`, tutorsRouter);
+app.use(`${process.env.API_BASE}/categories`, categoriesRouter);
 
 //* GET /
 app.get("/", (_req, res) => {
