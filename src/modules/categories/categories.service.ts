@@ -14,4 +14,48 @@ const createCategory = async (
 	return result;
 };
 
-export const categoriesService = { createCategory };
+//* Retrieve Categories
+const getCategories = async (q: {
+	search?: string;
+}): Promise<{ categories: Category[]; total: number }> => {
+	// Normalized queries
+	const conditions: object[] = [];
+	// Search
+	if (q.search) {
+		conditions.push({
+			OR: [
+				// Name
+				{
+					name: {
+						contains: q.search,
+						mode: "insensitive",
+					},
+				},
+				// Slug
+				{
+					slug: {
+						contains: q.search,
+						mode: "insensitive",
+					},
+				},
+				// Description
+				{
+					description: {
+						contains: q.search,
+						mode: "insensitive",
+					},
+				},
+			],
+		});
+	}
+	// Retrieval
+	const categories = await prisma.category.findMany({
+		where: {
+			AND: conditions,
+		},
+	});
+	// Return
+	return { categories, total: categories.length };
+};
+
+export const categoriesService = { createCategory, getCategories };
