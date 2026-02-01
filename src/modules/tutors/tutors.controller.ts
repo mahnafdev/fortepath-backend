@@ -51,4 +51,31 @@ const getTutors = async (req: Request, res: Response) => {
 	}
 };
 
-export const tutorsController = { getTutors };
+//* Retrieve a Tutor
+const getTutor = async (req: Request, res: Response) => {
+	try {
+		// Receive request params
+		const id = req.params.id as string;
+		// Retrieve data
+		const result: TutorProfile = await tutorsService.getTutor(id);
+		// 200 success response
+		return res.status(200).json({
+			success: true,
+			message: "Tutor retrieved successfully",
+			data: result,
+		});
+	} catch (err: any) {
+		// 500 error response
+		return res.status(500).json({
+			success: false,
+			message: "Unable to retrieve the tutor",
+			error: {
+				code: err.code || undefined,
+				message: err.message || undefined,
+				details: err,
+			},
+		});
+	}
+};
+
+export const tutorsController = { getTutors, getTutor };

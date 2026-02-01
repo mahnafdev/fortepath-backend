@@ -74,19 +74,13 @@ const getTutors = async (q: {
 				},
 				// Hourly Rate
 				{
-					hourlyRate: {
-						equals: Number(q.search),
-					},
+					hourlyRate: Number(q.search) || undefined,
 				},
 				// Rating
 				{
 					reviews: {
 						some: {
-							review: {
-								rating: {
-									equals: Number(q.search),
-								},
-							},
+							rating: Number(q.search) || undefined,
 						},
 					},
 				},
@@ -136,4 +130,57 @@ const getTutors = async (q: {
 	return { tutors, total: tutors.length };
 };
 
-export const tutorsService = { getTutors };
+//* Retrieve a Tutor
+const getTutor = async (id: string): Promise<TutorProfile> => {
+	const result = await prisma.tutorProfile.findUniqueOrThrow({
+		where: {
+			id,
+		},
+		include: {
+			user: {
+				select: {
+					id: true,
+					name: true,
+				},
+			},
+			reviews: {
+				select: {
+					student: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
+					rating: true,
+					feedback: true,
+				},
+			},
+			bookings: {
+				select: {
+					id: true,
+					student: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
+					topic: true,
+					status: true,
+				},
+			},
+			tutorCategories: {
+				select: {
+					category: {
+						select: {
+							name: true,
+							slug: true,
+						},
+					},
+				},
+			},
+		},
+	});
+	return result;
+};
+
+export const tutorsService = { getTutors, getTutor };
