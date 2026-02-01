@@ -58,4 +58,30 @@ const getCategories = async (q: {
 	return { categories, total: categories.length };
 };
 
-export const categoriesService = { createCategory, getCategories };
+//* Remove a Category
+const deleteCategory = async (id: string): Promise<Category> => {
+	const result = await prisma.category.delete({
+		where: {
+			id,
+		},
+		include: {
+			tutorCategories: {
+				select: {
+					tutor: {
+						select: {
+							id: true,
+							user: {
+								select: {
+									name: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	});
+	return result;
+};
+
+export const categoriesService = { createCategory, getCategories, deleteCategory };

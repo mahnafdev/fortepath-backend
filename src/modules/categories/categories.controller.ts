@@ -72,4 +72,31 @@ const getCategories = async (req: Request, res: Response) => {
 	}
 };
 
-export const categoriesController = { createCategory, getCategories };
+//* Remove a Category
+const deleteCategory = async (req: Request, res: Response) => {
+	try {
+		// Receive request params
+		const id = req.params.id as string;
+		// Remove category
+		const result: Category = await categoriesService.deleteCategory(id);
+		// 200 success response
+		return res.status(200).json({
+			success: true,
+			message: "Tutor removed successfully",
+			data: result,
+		});
+	} catch (err: any) {
+		// 500 error response
+		return res.status(500).json({
+			success: false,
+			message: "Unable to remove the category",
+			error: {
+				code: err.code || undefined,
+				message: err.message || undefined,
+				details: err,
+			},
+		});
+	}
+};
+
+export const categoriesController = { createCategory, getCategories, deleteCategory };
