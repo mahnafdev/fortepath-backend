@@ -2,6 +2,33 @@ import { Request, Response } from "express";
 import { TutorProfile } from "../../../generated/prisma/browser.ts";
 import { tutorsService } from "./tutors.service.ts";
 
+//* Register a Tutor
+const registerTutor = async (req: Request, res: Response) => {
+	try {
+		// Insert to DB
+		const tutor: Omit<TutorProfile, "updatedAt"> = await tutorsService.registerTutor(
+			req.body,
+		);
+		// 201 success response
+		res.status(201).json({
+			success: true,
+			message: "Tutor profile created successfully",
+			data: tutor,
+		});
+	} catch (err: any) {
+		// 500 error response
+		res.status(500).json({
+			success: false,
+			message: "Unable to create tutor profile",
+			error: {
+				code: err.code || undefined,
+				message: err.message || undefined,
+				details: err,
+			},
+		});
+	}
+};
+
 //* Retrieve Tutors
 const getTutors = async (req: Request, res: Response) => {
 	try {
@@ -78,4 +105,4 @@ const getTutor = async (req: Request, res: Response) => {
 	}
 };
 
-export const tutorsController = { getTutors, getTutor };
+export const tutorsController = { registerTutor, getTutors, getTutor };

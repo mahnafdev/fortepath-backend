@@ -4,6 +4,9 @@ import { auth, UserRole } from "../../middlewares/auth.ts";
 
 const router = Router();
 
+// POST /
+router.post("/", tutorsController.registerTutor);
+
 // GET /
 router.get(
 	"/",

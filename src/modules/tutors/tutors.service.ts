@@ -1,6 +1,41 @@
 import { TutorProfile } from "../../../generated/prisma/browser.ts";
 import { prisma } from "../../lib/prisma.ts";
 
+//* Register a Tutor
+const registerTutor = async (
+	data: Omit<TutorProfile, "id" | "createdAt" | "updatedAt">,
+): Promise<Omit<TutorProfile, "updatedAt">> => {
+	// Validate user's existence
+	const user = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: data.userId,
+		},
+	});
+	// Validate user role
+	if (user.role !== "tutor") {
+		const err = new Error(
+			`The provided value '${user.role}' for User field 'role' is not valid`,
+		);
+		// @ts-expect-error
+		err.code = "P2006";
+		throw err;
+	}
+	// Insertion
+	const result = await prisma.tutorProfile.create({
+		data,
+		include: {
+			user: {
+				select: {
+					name: true,
+					email: true,
+				},
+			},
+		},
+	});
+	// Return result
+	return result;
+};
+
 //* Retrieve Tutors
 const getTutors = async (q: {
 	category?: string;
@@ -183,4 +218,4 @@ const getTutor = async (id: string): Promise<TutorProfile> => {
 	return result;
 };
 
-export const tutorsService = { getTutors, getTutor };
+export const tutorsService = { registerTutor, getTutors, getTutor };
