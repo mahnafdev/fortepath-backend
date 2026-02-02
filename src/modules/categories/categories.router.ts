@@ -12,6 +12,12 @@ router.get(
 	auth(UserRole.STUDENT, UserRole.TUTOR, UserRole.ADMIN),
 	categoriesController.getCategories,
 );
+// GET /:id
+router.get(
+	"/:id",
+	auth(UserRole.STUDENT, UserRole.TUTOR, UserRole.ADMIN),
+	categoriesController.getCategory,
+);
 // DELETE /:id
 router.delete("/:id", auth(UserRole.ADMIN), categoriesController.deleteCategory);
 

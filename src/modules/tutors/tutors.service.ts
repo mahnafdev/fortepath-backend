@@ -145,17 +145,12 @@ const getTutors = async (q: {
 			tutorCategories: {
 				select: {
 					category: {
-						select: { name: true, slug: true },
+						select: { id: true, name: true, slug: true, description: true },
 					},
 				},
 			},
 			reviews: {
 				select: {
-					student: {
-						select: {
-							name: true,
-						},
-					},
 					rating: true,
 				},
 			},
@@ -180,6 +175,7 @@ const getTutor = async (id: string): Promise<TutorProfile> => {
 			},
 			reviews: {
 				select: {
+					id: true,
 					student: {
 						select: {
 							id: true,
@@ -207,8 +203,10 @@ const getTutor = async (id: string): Promise<TutorProfile> => {
 				select: {
 					category: {
 						select: {
+							id: true,
 							name: true,
 							slug: true,
+							description: true,
 						},
 					},
 				},

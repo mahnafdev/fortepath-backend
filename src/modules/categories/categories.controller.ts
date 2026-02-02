@@ -72,6 +72,33 @@ const getCategories = async (req: Request, res: Response) => {
 	}
 };
 
+//* Retrieve a Category
+const getCategory = async (req: Request, res: Response) => {
+	try {
+		// Receive request params
+		const id = req.params.id as string;
+		// Retrieve data
+		const result: Category = await categoriesService.getCategory(id);
+		// 200 success response
+		return res.status(200).json({
+			success: true,
+			message: "Category retrieved successfully",
+			data: result,
+		});
+	} catch (err: any) {
+		// 500 error response
+		return res.status(500).json({
+			success: false,
+			message: "Unable to retrieve the category",
+			error: {
+				code: err.code || undefined,
+				message: err.message || undefined,
+				details: err,
+			},
+		});
+	}
+};
+
 //* Remove a Category
 const deleteCategory = async (req: Request, res: Response) => {
 	try {
@@ -99,4 +126,9 @@ const deleteCategory = async (req: Request, res: Response) => {
 	}
 };
 
-export const categoriesController = { createCategory, getCategories, deleteCategory };
+export const categoriesController = {
+	createCategory,
+	getCategories,
+	getCategory,
+	deleteCategory,
+};

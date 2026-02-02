@@ -58,6 +58,38 @@ const getCategories = async (q: {
 	return { categories, total: categories.length };
 };
 
+//* Retrieve a Category
+const getCategory = async (id: string): Promise<Category> => {
+	const result = await prisma.category.findUniqueOrThrow({
+		where: {
+			id,
+		},
+		include: {
+			tutorCategories: {
+				select: {
+					tutor: {
+						select: {
+							id: true,
+							designation: true,
+							bio: true,
+							hourlyRate: true,
+							user: {
+								select: {
+									id: true,
+									name: true,
+									email: true,
+									image: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	});
+	return result;
+};
+
 //* Remove a Category
 const deleteCategory = async (id: string): Promise<Category> => {
 	const result = await prisma.category.delete({
@@ -84,4 +116,4 @@ const deleteCategory = async (id: string): Promise<Category> => {
 	return result;
 };
 
-export const categoriesService = { createCategory, getCategories, deleteCategory };
+export const categoriesService = { createCategory, getCategories, getCategory, deleteCategory };

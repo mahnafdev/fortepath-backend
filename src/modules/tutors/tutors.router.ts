@@ -7,11 +7,7 @@ const router = Router();
 // POST /
 router.post("/", tutorsController.registerTutor);
 // GET /
-router.get(
-	"/",
-	auth(UserRole.STUDENT, UserRole.TUTOR, UserRole.ADMIN),
-	tutorsController.getTutors,
-);
+router.get("/", tutorsController.getTutors);
 // GET /:id
 router.get(
 	"/:id",
