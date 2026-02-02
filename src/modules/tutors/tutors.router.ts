@@ -6,7 +6,6 @@ const router = Router();
 
 // POST /
 router.post("/", tutorsController.registerTutor);
-
 // GET /
 router.get(
 	"/",
@@ -19,5 +18,8 @@ router.get(
 	auth(UserRole.STUDENT, UserRole.TUTOR, UserRole.ADMIN),
 	tutorsController.getTutor,
 );
+
+// POST /categories
+router.post("/categories", auth(UserRole.TUTOR, UserRole.ADMIN), tutorsController.addCategory);
 
 export { router as tutorsRouter };

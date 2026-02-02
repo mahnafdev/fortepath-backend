@@ -1,4 +1,4 @@
-import { TutorProfile } from "../../../generated/prisma/browser.ts";
+import { TutorProfile, TutorCategory } from "../../../generated/prisma/client.ts";
 import { prisma } from "../../lib/prisma.ts";
 
 //* Register a Tutor
@@ -32,7 +32,7 @@ const registerTutor = async (
 			},
 		},
 	});
-	// Return result
+	// Return
 	return result;
 };
 
@@ -218,4 +218,26 @@ const getTutor = async (id: string): Promise<TutorProfile> => {
 	return result;
 };
 
-export const tutorsService = { registerTutor, getTutors, getTutor };
+//* Add Category to Tutor
+const addCategory = async (data: TutorCategory): Promise<TutorCategory> => {
+	// Validate category's existence
+	await prisma.category.findUniqueOrThrow({
+		where: {
+			id: data.categoryId,
+		},
+	});
+	// Validate tutor's existence
+	await prisma.tutorProfile.findUniqueOrThrow({
+		where: {
+			id: data.tutorId,
+		},
+	});
+	// Insertion
+	const result = await prisma.tutorCategory.create({
+		data,
+	});
+	// Return
+	return result;
+};
+
+export const tutorsService = { registerTutor, getTutors, getTutor, addCategory };

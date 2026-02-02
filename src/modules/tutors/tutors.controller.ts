@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { TutorProfile } from "../../../generated/prisma/browser.ts";
+import { TutorProfile, TutorCategory } from "../../../generated/prisma/client.ts";
 import { tutorsService } from "./tutors.service.ts";
 
 //* Register a Tutor
@@ -105,4 +105,29 @@ const getTutor = async (req: Request, res: Response) => {
 	}
 };
 
-export const tutorsController = { registerTutor, getTutors, getTutor };
+//* Add Category to Tutor
+const addCategory = async (req: Request, res: Response) => {
+	try {
+		// Insert to DB
+		const tutorCategory: TutorCategory = await tutorsService.addCategory(req.body);
+		// 201 success response
+		res.status(201).json({
+			success: true,
+			message: "Category added to Tutor successfully",
+			data: tutorCategory,
+		});
+	} catch (err: any) {
+		// 500 error response
+		res.status(500).json({
+			success: false,
+			message: "Unable to add category to tutor",
+			error: {
+				code: err.code || undefined,
+				message: err.message || undefined,
+				details: err,
+			},
+		});
+	}
+};
+
+export const tutorsController = { registerTutor, getTutors, getTutor, addCategory };
