@@ -48,4 +48,54 @@ const createReview = async (data: Omit<Review, "id" | "createdAt">): Promise<Rev
 	return result;
 };
 
-export const reviewsService = { createReview };
+//* Retrieve Reviews
+const getReviews = async (q: {
+	tutorId?: string;
+	studentId?: string;
+	rating?: number;
+}): Promise<{ reviews: Review[]; total: number }> => {
+	// Normalize queries
+	const conditions: object[] = [];
+	// Filter by tutor
+	if (q.tutorId) {
+		conditions.push({
+			tutorId: q.tutorId,
+		});
+	}
+	// Filter by student
+	if (q.studentId) {
+		conditions.push({
+			studentId: q.studentId,
+		});
+	}
+	// Filter by rating
+	if (q.rating) {
+		conditions.push({
+			rating: q.rating,
+		});
+	}
+	// Retrieval
+	const reviews = await prisma.review.findMany({
+		where: {
+			AND: conditions,
+		},
+		include: {
+			student: {
+				select: {
+					id: true,
+					name: true,
+					image: true,
+				},
+			},
+			tutor: {
+				select: {
+					id: true,
+				},
+			},
+		},
+	});
+	// Return
+	return { reviews, total: reviews.length };
+};
+
+export const reviewsService = { createReview, getReviews };

@@ -106,10 +106,10 @@ const deleteCategory = async (req: Request, res: Response) => {
 		const id = req.params.id as string;
 		// Remove category
 		const result: Category = await categoriesService.deleteCategory(id);
-		// 200 success response
-		return res.status(200).json({
+		// 204 success response
+		return res.status(204).json({
 			success: true,
-			message: "Tutor removed successfully",
+			message: "Category removed successfully",
 			data: result,
 		});
 	} catch (err: any) {
