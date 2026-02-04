@@ -9,17 +9,9 @@ const registerTutor = async (
 	const user = await prisma.user.findUniqueOrThrow({
 		where: {
 			id: data.userId,
+			role: "tutor",
 		},
 	});
-	// Validate user role
-	if (user.role !== "tutor") {
-		const err = new Error(
-			`The provided value '${user.role}' for User field 'role' is not valid`,
-		);
-		// @ts-expect-error
-		err.code = "P2006";
-		throw err;
-	}
 	// Insertion
 	const result = await prisma.tutorProfile.create({
 		data,
@@ -228,6 +220,9 @@ const addCategory = async (data: TutorCategory): Promise<TutorCategory> => {
 	await prisma.tutorProfile.findUniqueOrThrow({
 		where: {
 			id: data.tutorId,
+			user: {
+				role: "tutor",
+			},
 		},
 	});
 	// Insertion
