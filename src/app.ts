@@ -6,6 +6,7 @@ import { auth } from "./lib/auth.ts";
 import { tutorsRouter } from "./modules/tutors/tutors.router.ts";
 import { categoriesRouter } from "./modules/categories/categories.router.ts";
 import { reviewsRouter } from "./modules/reviews/reviews.router.ts";
+import { bookingsRouter } from "./modules/bookings/bookings.router.ts";
 
 //* Express App
 const app: Application = express();
@@ -26,6 +27,7 @@ app.use(
 app.use(`${process.env.API_BASE}/tutors`, tutorsRouter);
 app.use(`${process.env.API_BASE}/categories`, categoriesRouter);
 app.use(`${process.env.API_BASE}/reviews`, reviewsRouter);
+app.use(`${process.env.API_BASE}/bookings`, bookingsRouter);
 
 //* GET /
 app.get("/", (_req, res) => {

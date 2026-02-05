@@ -158,6 +158,7 @@ model Booking {
     status    BookingStatus @default(CONFIRMED)
 
     createdAt DateTime @default(now()) @db.Timestamptz
+    updatedAt DateTime @updatedAt @db.Timestamptz
 
     student User?         @relation(fields: [studentId], references: [id], onDelete: SetNull)
     tutor   TutorProfile? @relation(fields: [tutorId], references: [id], onDelete: SetNull)
