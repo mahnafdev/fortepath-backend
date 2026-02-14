@@ -17,9 +17,15 @@ const createCategory = async (
 //* Retrieve Categories
 const getCategories = async (q: {
 	search?: string;
+	page?: number;
+	limit?: number;
 }): Promise<{ categories: Category[]; total: number }> => {
 	// Normalized queries
 	const conditions: object[] = [];
+	const presentation: {
+		skip?: number;
+		take?: number;
+	} = {};
 	// Search
 	if (q.search) {
 		conditions.push({
@@ -48,11 +54,18 @@ const getCategories = async (q: {
 			],
 		});
 	}
+	// Offset pagination
+	if (q.page && q.limit) {
+		presentation.skip = q.limit * (q.page - 1);
+		presentation.take = q.limit;
+	}
 	// Retrieval
 	const categories = await prisma.category.findMany({
 		where: {
 			AND: conditions,
 		},
+		skip: presentation.skip,
+		take: presentation.take,
 	});
 	// Return
 	return { categories, total: categories.length };

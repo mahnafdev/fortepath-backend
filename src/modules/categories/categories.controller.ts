@@ -35,9 +35,13 @@ const getCategories = async (req: Request, res: Response) => {
 		// Receive request queries
 		const query = req.query;
 		const search = query.search as string | undefined;
+		const page = Number(query.page) as number | undefined;
+		const limit = Number(query.limit) as number | undefined;
 		// Organize queries
 		const queries = {
 			search,
+			page,
+			limit,
 		};
 		// Extract used queries
 		const usedQueries = Object.fromEntries(
